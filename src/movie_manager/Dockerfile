@@ -7,4 +7,6 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+# Added the --reload flag to enable hot reloading, which is useful for development
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]

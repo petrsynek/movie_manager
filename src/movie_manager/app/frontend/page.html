@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Page</title>
+    <style>
+        /* CSS for the frontpage*/
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #0000002c;
+        }
+
+		.page-title, .search-input, .search-button {
+			background-color: #ccc;
+			padding: 10px;
+			border-radius: 10px;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			font-size: 2.5rem;
+			color: #fff;
+			text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			text-align: center;
+		}
+
+		.search-input {
+			margin: 20px auto;
+			display: block;
+			width: 70%;
+			border: none;
+			outline: none;
+			padding: 10px;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			font-size: 1.5rem;
+			color: #333;
+			background-color: #f9f9f9;
+			text-align: center;
+			transition: background-color 0.3s ease;
+		}
+
+		.search-input:focus {
+			background-color: #fff;
+		}
+
+		.search-button {
+			display: block;
+			margin: 0 auto;
+			padding: 10px 20px;
+			font-size: 1.5rem;
+			color: #fff;
+			background-color: #4CAF50;
+			border: none;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		.search-button:hover {
+			background-color: #3E8E41;
+		}
+
+        .number-element {
+			display: inline-block;
+			padding: 10px;
+			margin: 10px;
+			background-color: #f9f9f9;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			font-size: 1.5rem;
+			color: #333;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		.number-element:hover {
+			background-color: #eee;
+		}
+
+		.number-element.active {
+			background-color: #4CAF50;
+			color: #fff;
+		}
+
+        #numbers-container {
+			text-align: center;
+		}
+
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            width: 200px;
+            height: 280px;
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .card img {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="page-title">Search for Movies</h1>
+    <form>
+        <input type="text" class="search-input" id="search-box" placeholder="Enter a movie name..." onsubmit="">
+        <!-- <button type="button" class="search-button" onclick="search()">Search</button> -->
+    </form>
+    <div id="numbers-container"></div>
+    <div class="card-grid" id="results"></div>
+
+    <script>
+		// Set the range of numbers to show
+		const startNumber = 1;
+		var endNumber = 1;
+
+        // Set the initial selected number to None
+		var selectedNumber = 1;
+
+        function updateSelectedNumberDisplay() {
+            // Create an array of numbers to show
+            const numbers = Array.from({length: endNumber - startNumber + 1}, (_, index) => startNumber + index);
+
+            // Get the container element to hold the number elements
+            const numbersContainer = document.getElementById('numbers-container');
+
+            // Create and add the number elements to the container
+            numbersContainer.innerHTML = '';
+            for (let i = 0; i < numbers.length; i++) {
+                const numberElement = document.createElement('div');
+                numberElement.classList.add('number-element');
+                numberElement.textContent = numbers[i];
+                numberElement.addEventListener('click', () => {
+                    // Set the selected number variable and update the display
+                    selectedNumber = numbers[i];
+                    // Update the page content
+                    renderData();
+                    // Remove the 'active' class from all number elements
+                    document.querySelectorAll('.number-element').forEach(element => element.classList.remove('active'));
+                    // Add the 'active' class to the clicked number element
+                    numberElement.classList.add('active');
+                });
+                numbersContainer.appendChild(numberElement);
+            }
+        }
+
+		// Call the updateSelectedNumberDisplay function to set the initial display
+		updateSelectedNumberDisplay();
+
+
+        var data = [];
+
+        const imagesPerPage = 5;
+
+        // Display the movies on the page
+
+        function renderData() {
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            for (let i = (selectedNumber-1)*imagesPerPage; i < (selectedNumber)*imagesPerPage ; i++) {
+                const card = document.createElement("div");
+                card.className = "card";
+                const image = document.createElement("img");
+                image.src = data[i].image;
+                const name = document.createElement("p");
+                name.innerHTML = data[i].name;
+                card.appendChild(image);
+                card.appendChild(name);
+                resultsDiv.appendChild(card);
+            }
+        }
+
+        // Query the API for search results
+
+        async function search() {
+            const query = document.getElementById("search-box").value || "";
+            const response = await fetch(`/api/search?search_term=${query}`);
+            data = await response.json();
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            selectedNumber = 1;
+            endNumber = Math.ceil(data.length/imagesPerPage);
+            updateSelectedNumberDisplay();
+            renderData();
+        }
+
+        // Bind the search function on keyup event of the search box
+        const searchBox = document.getElementById("search-box");
+        searchBox.addEventListener("keyup", function(event) {
+            search();
+        });
+
+        // Make the initial search
+        search();
+    </script>
+</body>
+</html>
