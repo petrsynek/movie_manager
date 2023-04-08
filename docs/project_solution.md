@@ -26,7 +26,8 @@
 - [x] cron job that will update data from remote api to db
 - [x] serve base page with paginated results
 - [x] api endpoint for basic name search 
-- extend search for extra fields and provide custom orderning (asc, desc) 
+- [x] provide custom orderning (asc, desc)
+- display details on card click
 - add tests 
 
 ## Secondary Goals
@@ -38,4 +39,5 @@
 ## Issues
 
 - the html page is crap and the script is even worse but I suppose it's ok for homework
-- - the pagination was not required and will cause problems as there is currently no limit on query, lets say this does not scale nicely, again I guess ok for homework
+- the pagination was not required and will cause problems as there is currently no limit on query, lets say this does not scale nicely, again I guess ok for homework
+- so far manually tested, really don't know what to test here as all we do is querry db

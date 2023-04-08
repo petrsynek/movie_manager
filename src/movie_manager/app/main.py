@@ -2,6 +2,7 @@ import logging
 
 import database_operations
 import movie_fetcher
+import pymongo
 from config import MovieManagerSettings
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
@@ -35,13 +36,17 @@ def read_root():
 
 
 @app.get("/api/search")
-def name_search(search_term: str):
+def name_search(search_term: str, order: bool = True):
     """Search for movies by name."""
 
+    ordering = pymongo.ASCENDING if order else pymongo.DESCENDING
+
     if not search_term:
-        data = movies.find({})
+        data = movies.find({}).sort("name", ordering)
     else:
-        data = movies.find({"name": {"$regex": search_term, "$options": "i"}})
+        data = movies.find({"name": {"$regex": search_term, "$options": "i"}}).sort(
+            "name", ordering
+        )
 
     repsonse = []
     for movie in data:

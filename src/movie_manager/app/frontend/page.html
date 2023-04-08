@@ -9,6 +9,33 @@
             background-color: #0000002c;
         }
 
+        /* Parent element */
+        .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: stretch;
+        height: 100%;
+        }
+
+        /* Left column */
+        .left-column {
+        flex: 2;
+        flex-basis: 20.00%;
+        background-color: #f2f2f2;
+        padding: 20px;
+        }
+
+        /* Right column */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+        flex: 1;
+        flex-basis: 80.00%;
+        background-color: #ffffff;
+        padding: 20px;
+        }
+
 		.page-title, .search-input, .search-button {
 			background-color: #ccc;
 			padding: 10px;
@@ -109,23 +136,59 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+
+        .oreder-btn {
+			display: block;
+			width: 80%;
+			border: none;
+            color: #fcfcfc;
+			background-color: #4c5063;
+			text-align: left;
+			padding: 10px;
+			font-size: 16px;
+			cursor: pointer;
+		}
     </style>
 </head>
 <body>
-    <h1 class="page-title">Search for Movies</h1>
-    <form>
-        <input type="text" class="search-input" id="search-box" placeholder="Enter a movie name..." onsubmit="">
-        <!-- <button type="button" class="search-button" onclick="search()">Search</button> -->
-    </form>
-    <div id="numbers-container"></div>
-    <div class="card-grid" id="results"></div>
+    <h1 class="page-title">Movie manager</h1>
+        <div class="container">
+            <div class="left-column">
+                <form>
+                    <input type="text" class="search-input" id="search-box" placeholder="Enter a movie name..." onsubmit="">
+                </form>
+                <input type="hidden" id="switch-variable" value="true">
+                <button onclick="toggleOrder()" id="switch-button" class="oreder-btn">Ascending</button>
+            </div>
+            <div class="right-column">
+                <div id="numbers-container"></div>
+                <div class="card-grid" id="results"></div>
+            </div>
+        </div>
 
     <script>
-		// Set the range of numbers to show
+
+        // Ordering switch
+		function toggleOrder() {
+			var switchVariable = document.getElementById("switch-variable");
+
+            var switchButton = document.getElementById("switch-button");
+
+            if (switchButton.innerHTML === "Ascending") {
+                switchButton.innerHTML = "Descending";
+                switchVariable.value = "false";
+            } else {
+                switchButton.innerHTML = "Ascending";
+                switchVariable.value = "true";
+            }
+            search();
+		}
+
+		// Set the range of pages to show
 		const startNumber = 1;
 		var endNumber = 1;
 
-        // Set the initial selected number to None
+        // Set the initial selected page to None
 		var selectedNumber = 1;
 
         function updateSelectedNumberDisplay() {
@@ -152,6 +215,9 @@
                     numberElement.classList.add('active');
                 });
                 numbersContainer.appendChild(numberElement);
+                if (numbers[i] === selectedNumber) {
+                    numberElement.classList.add('active');
+                }
             }
         }
 
@@ -161,7 +227,7 @@
 
         var data = [];
 
-        const imagesPerPage = 5;
+        const imagesPerPage = 10;
 
         // Display the movies on the page
 
@@ -185,7 +251,8 @@
 
         async function search() {
             const query = document.getElementById("search-box").value || "";
-            const response = await fetch(`/api/search?search_term=${query}`);
+            var switchVariable = document.getElementById("switch-variable");
+            const response = await fetch(`/api/search?search_term=${query}&order=${switchVariable.value}`);
             data = await response.json();
             const resultsDiv = document.getElementById("results");
             resultsDiv.innerHTML = "";
