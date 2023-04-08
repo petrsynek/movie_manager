@@ -12,7 +12,3 @@ Uživateli by měla poskytnout JEDNODUCHÝ front-end psaný jakoukoliv technolog
 Přehrávání !NENÍ! potřeba řešit, ale obrázek z iconUri by byl hezký
 
 Nejde o grafickou podobu a jestli budou barvičky ladit - to není úplně práce backendisty, tzn. nikdo neřešíme design. Důležité je, jak se zhostíte práce s parametry, filtrovanim a řazením.
-
-# Questions
-
-- Why in python? Python is like 10x slower than JS(TS) - will consume much more resources. IMO python is good for analytics, simple apis, data processing, ML/AI but this? 

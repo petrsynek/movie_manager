@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Page</title>
+    <style>
+        /* CSS for the frontpage*/
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #0000002c;
+        }
+
+        /* Parent element */
+        .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: stretch;
+        height: 100%;
+        }
+
+        /* Left column */
+        .left-column {
+        flex: 2;
+        flex-basis: 20.00%;
+        background-color: #f2f2f2;
+        padding: 20px;
+        }
+
+        /* Right column */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+        flex: 1;
+        flex-basis: 80.00%;
+        background-color: #ffffff;
+        padding: 20px;
+        }
+
+		.page-title, .search-input, .search-button {
+			background-color: #ccc;
+			padding: 10px;
+			border-radius: 10px;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			font-size: 2.5rem;
+			color: #fff;
+			text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			text-align: center;
+		}
+
+		.search-input {
+			margin: 20px auto;
+			display: block;
+			width: 70%;
+			border: none;
+			outline: none;
+			padding: 10px;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			font-size: 1.5rem;
+			color: #333;
+			background-color: #f9f9f9;
+			text-align: center;
+			transition: background-color 0.3s ease;
+		}
+
+		.search-input:focus {
+			background-color: #fff;
+		}
+
+		.search-button {
+			display: block;
+			margin: 0 auto;
+			padding: 10px 20px;
+			font-size: 1.5rem;
+			color: #fff;
+			background-color: #4CAF50;
+			border: none;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		.search-button:hover {
+			background-color: #3E8E41;
+		}
+
+        .number-element {
+			display: inline-block;
+			padding: 10px;
+			margin: 10px;
+			background-color: #f9f9f9;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			font-size: 1.5rem;
+			color: #333;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		.number-element:hover {
+			background-color: #eee;
+		}
+
+		.number-element.active {
+			background-color: #4CAF50;
+			color: #fff;
+		}
+
+        #numbers-container {
+			text-align: center;
+		}
+
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            width: 200px;
+            height: 280px;
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .card img {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .oreder-btn {
+			display: block;
+			width: 80%;
+			border: none;
+            color: #fcfcfc;
+			background-color: #4c5063;
+			text-align: left;
+			padding: 10px;
+			font-size: 20px;
+			cursor: pointer;
+		}
+
+        /* This makes checkboxes to go one per line - magic */
+        label {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+    <h1 class="page-title">Movie manager</h1>
+        <div class="container">
+            <div class="left-column">
+                <form>
+                    <input type="text" class="search-input" id="search-box" placeholder="Enter a movie name..." onsubmit="">
+                </form>
+                <input type="hidden" id="ordering-switch" value="true">
+                <button onclick="toggleOrder()" id="switch-button" class="oreder-btn">Name: Ascending</button>
+                <div id="checkbox-set"></div>
+            </div>
+            <div class="right-column">
+                <div id="numbers-container"></div>
+                <div class="card-grid" id="results"></div>
+            </div>
+        </div>
+
+    <script>
+
+        function run() {
+            // Main function to run the scrip when the page loads
+            // Ensures that the internal variables are not accessible from the console polluting global scope
+
+            var enabledFilters = {}
+
+            // Function to create the filter checkboxes
+            function createFilterSet(filters) {
+                const container = document.getElementById("checkbox-set");
+
+                // For each key in the filters object
+                for (const key in filters) {
+                    // Create a new paragraph element with name of the field
+                    const p = document.createElement("p");
+                    p.style.fontWeight = "bold"
+                    p.style.padding = "10px";
+                    p.style.backgroundColor = "#4c5063";
+                    p.style.color = "#fcfcfc";
+                    p.textContent = key.toUpperCase();
+                    container.appendChild(p);
+
+                    // Create a checkbox for each value in the field
+                    const values = filters[key];
+                    for (const value of values) {
+                        const label = document.createElement("label");
+                        label.style.fontSize = "10px";
+                        const checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.name = key;
+                        checkbox.value = value;
+
+                        // Add event listener to the checkbox that will invoke the search function
+                        checkbox.onchange = function() {
+                            search();
+                        }
+                        label.appendChild(checkbox);
+                        label.appendChild(document.createTextNode(value));
+                        container.appendChild(label);
+                    }
+                }
+            }
+
+            // Function to fetch the filters from the server
+            async function fetchFilters() {
+                const response = await fetch(`/api/searchfields`);
+                filterData = await response.json();
+                createFilterSet(filterData);
+            }
+
+
+            // Function that retrieves the filters from the checkboxes for use in search
+            function getCheckedFilters() {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                let filters = {};
+                checkboxes.forEach((checkbox) => {
+                    if (filters[checkbox.name]) {
+                        filters[checkbox.name].push(checkbox.value);
+                    } else {
+                        filters[checkbox.name] = [checkbox.value];
+                    }
+                });
+                return filters;
+            }
+
+            // Ordering switch
+            function toggleOrder() {
+                // h
+                var switchVariable = document.getElementById("ordering-switch");
+                var switchButton = document.getElementById("switch-button");
+
+                if (switchButton.innerHTML === "Name: Ascending") {
+                    switchButton.innerHTML = "Name: Descending";
+                    switchVariable.value = "false";
+                } else {
+                    switchButton.innerHTML = "Name: Ascending";
+                    switchVariable.value = "true";
+                }
+                search();
+            }
+
+            // Set the range of pages to show
+            const startNumber = 1;
+            var endNumber = 1;
+
+            // Set the initial selected page to None
+            var selectedNumber = 1;
+
+            function updateSelectedNumberDisplay() {
+                // Create an array of numbers to show
+                const numbers = Array.from({length: endNumber - startNumber + 1}, (_, index) => startNumber + index);
+
+                // Get the container element to hold the number elements
+                const numbersContainer = document.getElementById('numbers-container');
+
+                // Create and add the number elements to the container
+                numbersContainer.innerHTML = '';
+                for (let i = 0; i < numbers.length; i++) {
+                    const numberElement = document.createElement('div');
+                    numberElement.classList.add('number-element');
+                    numberElement.textContent = numbers[i];
+                    numberElement.addEventListener('click', () => {
+                        // Set the selected number variable and update the display
+                        selectedNumber = numbers[i];
+                        // Update the page content
+                        renderData();
+                        // Remove the 'active' class from all number elements
+                        document.querySelectorAll('.number-element').forEach(element => element.classList.remove('active'));
+                        // Add the 'active' class to the clicked number element
+                        numberElement.classList.add('active');
+                    });
+                    numbersContainer.appendChild(numberElement);
+                    if (numbers[i] === selectedNumber) {
+                        numberElement.classList.add('active');
+                    }
+                }
+            }
+
+            // Call the updateSelectedNumberDisplay function to set the initial display
+            updateSelectedNumberDisplay();
+
+
+            var moviesData = [];
+
+            const imagesPerPage = 10;
+
+            // Function to display the movies on the page
+            function renderData() {
+                // If there is no data, return
+                if (moviesData.length === 0) {
+                    const resultsDiv = document.getElementById("results");
+                    resultsDiv.innerHTML = "";
+                    return;
+                }
+
+                // Get the container element to hold the results
+                const resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                for (let i = (selectedNumber-1)*imagesPerPage; i < Math.min((selectedNumber)*imagesPerPage, moviesData.length) ; i++) {
+
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.value = moviesData[i].name; // this is here for on click function
+                    card.addEventListener("click", openInFrame)
+
+                    const image = document.createElement("img");
+                    image.src = moviesData[i].image;
+                    image.value = moviesData[i].name; // this is here for on click function
+
+                    const name = document.createElement("p");
+                    name.innerHTML = moviesData[i].name;
+                    name.value = moviesData[i].name; // this is here for on click function
+
+                    card.appendChild(image);
+                    card.appendChild(name);
+                    resultsDiv.appendChild(card);
+                }
+            }
+
+            // Function to fetch and display movie details in a frame
+            function openInFrame (event) {
+                // Get the information from the card values
+                // as this has to be on every elements in the card i had to add it to all of them in the renderData function
+                // definitely not the best way to do it but it works
+                var movieTitle = event.target.value;
+
+                // Fetch the dictionary data
+                fetch(`/api/moviedetail/?movie_name=${movieTitle}`)
+                .then(function(response) {
+                    return response.json();
+                }) // this then notation is way more cool, but I'm not going to rewrite the whole thing
+                .then(function(dictionary) {
+                    // Display the dictionary and card information in frame
+                    var frame = document.createElement("div");
+                    frame.style.position = "fixed";
+                    frame.style.top = "0";
+                    frame.style.left = "0";
+                    frame.style.width = "100%";
+                    frame.style.height = "100%";
+                    frame.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+
+                    var dictionaryDisplay = document.createElement("div");
+                    dictionaryDisplay.style.position = "absolute";
+                    dictionaryDisplay.style.top = "50%";
+                    dictionaryDisplay.style.left = "50%";
+                    dictionaryDisplay.style.transform = "translate(-50%, -50%)";
+                    dictionaryDisplay.style.backgroundColor = "#fff";
+                    dictionaryDisplay.style.padding = "20px";
+                    dictionaryDisplay.style.borderRadius = "10px";
+                    dictionaryDisplay.innerHTML = "<strong>Title:</strong> " + movieTitle + "<br><br>" +
+                    "<strong>Description:</strong> " + '<pre>' + JSON.stringify(dictionary, null, 4) + '</pre>';
+
+                    frame.appendChild(dictionaryDisplay);
+                    document.body.appendChild(frame);
+
+                    // Add a click event listener to the frame to close it when clicked
+                    frame.addEventListener("click", function() {
+                    document.body.removeChild(frame);
+                    });
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+            }
+
+            // Function that querries the API for search results
+            async function search() {
+                // Get the search term from the search box
+                const query = document.getElementById("search-box").value || "";
+
+                // Get the ordering switch value
+                var switchVariable = document.getElementById("ordering-switch");
+
+                // Get the filters
+                const filters = JSON.stringify(getCheckedFilters());
+
+                // Fetch the search results from the API
+                const response = await fetch(`/api/search?search_term=${query}&order=${switchVariable.value}&filters=${filters}`);
+                moviesData = await response.json();
+
+                // Reset the page content and variables
+                selectedNumber = 1;
+                endNumber = Math.ceil(moviesData.length/imagesPerPage);
+
+                // Update the page content
+                updateSelectedNumberDisplay();
+                renderData();
+            }
+
+            // Bind the search function on keyup event of the search box
+            const searchBox = document.getElementById("search-box");
+            searchBox.addEventListener("keyup", function(event) {
+                search();
+            });
+
+            // Make the initial search
+            fetchFilters();
+            search();
+        }
+
+        run();
+    </script>
+</body>
+</html>
