@@ -27,17 +27,18 @@
 - [x] serve base page with paginated results
 - [x] api endpoint for basic name search 
 - [x] provide custom orderning (asc, desc)
-- display details on card click
+- [x] display details on card click
 - add tests 
 
 ## Secondary Goals
 
 - [x] partial text search
-- implement advanced filters bar on page
+- [x] implement advanced filters bar on page
 - [x] make app properly configurable
 
 ## Issues
 
-- the html page is crap and the script is even worse but I suppose it's ok for homework
-- the pagination was not required and will cause problems as there is currently no limit on query, lets say this does not scale nicely, again I guess ok for homework
-- so far manually tested, really don't know what to test here as all we do is querry db
+- the html page is not masterwork and the script is even worse but I suppose it's ok for homework for backend developer
+- the pagination was not required and as now is delegated to front end would cause problems on db as there is currently no limit on query, lets say this does not scale nicely, again I guess ok for homework
+- also because I like the look of it, I dont perform text search (on whole words) but regex search, which would likely to fry the db in real production (but looks super cool anyway)
+- so far manually tested
