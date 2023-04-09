@@ -10,6 +10,8 @@ up:
 	RESET_DB=false \
 	docker compose up -d
 
+	@echo -e "\n================================================ \n App is running at http://localhost:$(APP_PORT) \n ===============================================\n"
+
 down:
 	docker compose down
 

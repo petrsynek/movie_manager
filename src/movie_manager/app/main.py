@@ -41,8 +41,20 @@ def shutdown_event():
 
 
 @app.get("/api/search")
-def name_search(search_term: str = None, filters: str = None, order: bool = True):
-    """Search for movies by name."""
+def name_search(
+    search_term: str = None, filters: str = None, order: bool = True
+) -> list[dict[str, str]]:
+    """
+    Search for movies by name and by given filters.
+
+    Args:
+        search_term: string to search for in movie name
+        filters: json string with filters to apply to the search
+        order: True for ascending, False for descending
+
+    Returns:
+        Returns list of dicts with keys 'name' and 'image'.
+    """
 
     # set ordering
     ordering = pymongo.ASCENDING if order else pymongo.DESCENDING
@@ -70,8 +82,17 @@ def name_search(search_term: str = None, filters: str = None, order: bool = True
 
 
 @app.get("/api/searchfields")
-def provide_filters():
-    """Returns dict of unique values for selected fields in mongoDB collection."""
+def provide_filters() -> dict[str, list[str]]:
+    """
+    Returns dict of unique values for selected fields in mongoDB collection.
+
+    Args:
+        None
+
+    Returns:
+        Dict with search fields as keys and list of unique values for given key as values.
+
+    """
 
     # fields which I want to filter by on frontend
     fields = ["features", "source", "drm"]
@@ -80,8 +101,17 @@ def provide_filters():
 
 
 @app.get("/api/moviedetail")
-def movie_detail(movie_name: str):
-    """Returns movie details for a given movie name."""
+def movie_detail(movie_name: str) -> dict[str, str]:
+    """
+    Returns movie details for a given movie name.
+
+    Args:
+        movie_name: name of the movie to get details for
+
+    Returns:
+        Dict with movie details.
+
+    """
 
     querry_result = movies.find_one({"name": movie_name})
 
