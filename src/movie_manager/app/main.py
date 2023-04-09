@@ -6,7 +6,7 @@ import movie_fetcher
 import pymongo
 from config import MovieManagerSettings
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 # Get the app settings
 settings = MovieManagerSettings()
@@ -38,15 +38,6 @@ def shutdown_event():
     """Close the database connection and correctly terminate task on shutdown."""
     movie_fetcher_task.cancel()
     connection.close()
-
-
-@app.get("/")
-async def read_root():
-    """
-    Serve the frontend. But it's not cached, so it's not very efficient.
-    Should be served by nginx or something.
-    """
-    return FileResponse("frontend/page.html")
 
 
 @app.get("/api/search")
@@ -101,3 +92,9 @@ def movie_detail(movie_name: str):
         result = {"detail": "Movie not found"}
 
     return result
+
+
+# Static files should be provided by nginx in production.
+# Apparently if you mount static to root it will override the other routes.
+# So I had to put it here.
+app.mount("/", StaticFiles(directory="static/", html=True), name="static")
