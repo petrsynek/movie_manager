@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie manager</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <link rel="icon" href="">
+</head>
+<body>
+    <h1 class="page-title">Movie manager</h1>
+        <div class="container">
+            <div class="left-column">
+                <form>
+                    <input type="text" class="search-input" id="search-box" placeholder="Enter a movie name..." onsubmit="">
+                </form>
+                <input type="hidden" id="ordering-switch" value="true">
+                <button id="switch-button" class="oreder-btn">Name: Ascending</button>
+                <div id="checkbox-set"></div>
+            </div>
+            <div class="right-column">
+                <div id="numbers-container"></div>
+                <div class="card-grid" id="results"></div>
+            </div>
+        </div>
+        <script>run()</script>
+    </body>
+</html>
