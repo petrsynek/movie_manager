@@ -6,7 +6,7 @@ import movie_fetcher
 import pymongo
 from config import MovieManagerSettings
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse
 
 # Get the app settings
 settings = MovieManagerSettings()
@@ -16,7 +16,9 @@ logging.basicConfig(level=settings.loglevel)
 logging.info(f"Starting movie manager with settings: {settings.dict()}")
 
 # Get the database connection, database and movies collection.
-connection, movie_database, movies = database_operations.get_db(settings.mongo_uri)
+connection, movie_database, movies = database_operations.get_db(
+    settings.mongo_uri, settings.reset_db
+)
 
 logging.info("Connected to database")
 
@@ -39,24 +41,23 @@ def shutdown_event():
 
 
 @app.get("/")
-def read_root():
-    """Serve the frontend page, should be done by nginx in production."""
-
-    with open("frontend/page.html", "r") as f:
-        html_content = f.read()
-
-    return HTMLResponse(content=html_content, status_code=200)
+async def read_root():
+    """
+    Serve the frontend. But it's not cached, so it's not very efficient.
+    Should be served by nginx or something.
+    """
+    return FileResponse("frontend/page.html")
 
 
 @app.get("/api/search")
-def name_search(search_term: str, filters: str, order: bool = True):
+def name_search(search_term: str = None, filters: str = None, order: bool = True):
     """Search for movies by name."""
 
     # set ordering
     ordering = pymongo.ASCENDING if order else pymongo.DESCENDING
 
     # build filter query
-    parsed_filters = json.loads(filters)
+    parsed_filters = {} if not filters else json.loads(filters)
 
     filter_query = {key: {"$in": parsed_filters[key]} for key in parsed_filters}
 

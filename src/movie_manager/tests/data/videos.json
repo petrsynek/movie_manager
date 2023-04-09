@@ -1,0 +1,32 @@
+[
+    {
+      "name": "Alpha",
+      "iconUri": "https://ww.test.com/alpha.png",
+      "source": "TEST_SOURCE",
+      "drm": [
+        "TEST_DRM"
+      ],
+      "features": [
+        "TEST_FEATURE"
+      ]
+    },
+    {
+      "name": "Alpha 2",
+      "iconUri": "https://ww.test.com/alpha2.png",
+      "source": "TEST_SOURCE2",
+      "drm": [
+        "TEST_DRM2"
+      ],
+      "features": [
+        "TEST_FEATURE"
+      ]
+    },
+    {
+      "name": "Gamma",
+      "iconUri": "https://ww.test.com/gamma.png",
+      "source": "TEST_SOURCE3",
+      "drm": [
+        "TEST_DRM3"
+      ]
+    }
+  ]

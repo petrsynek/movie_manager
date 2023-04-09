@@ -5,19 +5,18 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-    command: --quiet
 
   movie_manager:
     build: ./src/movie_manager
     restart: always
     volumes:
-      - ./src/movie_manager/app:/app
+      - ./src/movie_manager/:/movie_manager/
     ports:
       - "8080:80"
     depends_on:
       - mongo
     environment:
-      MONGO_URI: "mongodb://mongo:27017/movie_database"
+      MONGO_URI: ${MONGO_URI}
+      RESET_DB: ${RESET_DB}
+      REMOTE_API_URL: ${REMOTE_API_URL}
+      REMOTE_API_POLL_INTERVAL: ${REMOTE_API_POLL_INTERVAL}

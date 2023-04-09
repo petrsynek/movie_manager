@@ -1,7 +1,10 @@
+from logging import getLogger
 from typing import Tuple
 
 import pymongo
 from config import MyMongoDsn
+
+logger = getLogger(__name__)
 
 
 def get_db(
@@ -12,10 +15,13 @@ def get_db(
 ]:
     """Get a database connection, database and movies collection."""
 
+    logger.info(f"Connecting to database {db_settings.database}")
+
     client = pymongo.MongoClient(host=db_settings.host, port=db_settings.port)
 
     # Resets the database if requested.
     if reset:
+        logger.info("Resetting database")
         client.drop_database(db_settings.database)
 
     # select database
@@ -25,5 +31,7 @@ def get_db(
     collection = db["movies"]
     collection.create_index("name", unique=True)
     collection.create_index([("name", "text")])
+
+    logger.info("Database setup complete")
 
     return client, db, collection
