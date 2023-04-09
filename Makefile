@@ -1,3 +1,4 @@
+export APP_PORT?=8080
 
 build:
 	docker compose build

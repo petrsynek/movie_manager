@@ -4,21 +4,21 @@
 
 ### Framework
 
-- [x] **FastAPI** - simple and reliable, not ideal for rendering view - but this project can be done with one template + js
-- **Flask** - no advantages
-- **Django** - simple but overkill
+- [x] **FastAPI** - simple
+- **Flask** - just bad compromise betweent the two
+- **Django** - would take care of everything but overkill
 
 ### Database
 
 - **Elasticsearch** - document based, good for search
-- [x] **MongoDB** - document based, still fine for fulltext in movie title, never worked with - at least I will learnd smthing
-- **Postgres** - could be done using HStoreField or JsonB but there are no relations - no need
+- [x] **MongoDB** - document based, still fine for search in movie title, never worked with - at least I will learn somthing
+- **Postgres** - could be done using HStoreField or JsonB but there are no relations which would make relational DB justified
 - **neo4j** - no relations - no need
 
 ### Deployment
 
-- **Local with makefile** - what about mongo? still the app could be run localy?
-- [x] **Docker-compose** - should be fine, maybe overkill
+- **Local with makefile** - what about mongo? would require someone to install mongo
+- [x] **Docker-compose with makefile** - should be fine as every dev has docker nowdays
 
 ## Primary Goals
 
@@ -36,7 +36,7 @@
 - [x] implement advanced filters bar on page
 - [x] make app properly configurable
   
-  Not going to do as this is too much nice to have for homework:
+Not going to do as this is too much nice to have for homework:
 - [ ] make all nice with db as dependency injection and not global variable
 - [ ] move all db operations to dao
 - [ ] move routes out of main
