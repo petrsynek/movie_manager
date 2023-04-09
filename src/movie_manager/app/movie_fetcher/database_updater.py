@@ -25,12 +25,13 @@ async def download_data_from_api_and_update_database(
     If movie is not in database, add it. If it is, update it.
     """
 
+    logger.info(f"Downloading data from API {url}")
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as resp:
+            async with session.get(url, timeout=1) as resp:
                 movies_data = await resp.text()
 
-    except aiohttp.web.HTTPException as e:
+    except Exception as e:
         logger.error(f"Error downloading data from API: {e}")
         return
 
