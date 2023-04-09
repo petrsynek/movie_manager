@@ -149,6 +149,25 @@
 			cursor: pointer;
 		}
 
+        .frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .dictionary-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
         /* This makes checkboxes to go one per line - magic */
         label {
             display: block;
@@ -164,7 +183,7 @@
                     <input type="text" class="search-input" id="search-box" placeholder="Enter a movie name..." onsubmit="">
                 </form>
                 <input type="hidden" id="ordering-switch" value="true">
-                <button onclick="toggleOrder()" id="switch-button" class="oreder-btn">Name: Ascending</button>
+                <button id="switch-button" class="oreder-btn">Name: Ascending</button>
                 <div id="checkbox-set"></div>
             </div>
             <div class="right-column">
@@ -254,6 +273,10 @@
                 }
                 search();
             }
+
+            // Bind the toggleOrder function to the switch button
+            var switchButton = document.getElementById("switch-button");
+            switchButton.onclick = toggleOrder;
 
             // Set the range of pages to show
             const startNumber = 1;
@@ -348,21 +371,10 @@
                 .then(function(dictionary) {
                     // Display the dictionary and card information in frame
                     var frame = document.createElement("div");
-                    frame.style.position = "fixed";
-                    frame.style.top = "0";
-                    frame.style.left = "0";
-                    frame.style.width = "100%";
-                    frame.style.height = "100%";
-                    frame.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+                    frame.classList.add("frame");
 
                     var dictionaryDisplay = document.createElement("div");
-                    dictionaryDisplay.style.position = "absolute";
-                    dictionaryDisplay.style.top = "50%";
-                    dictionaryDisplay.style.left = "50%";
-                    dictionaryDisplay.style.transform = "translate(-50%, -50%)";
-                    dictionaryDisplay.style.backgroundColor = "#fff";
-                    dictionaryDisplay.style.padding = "20px";
-                    dictionaryDisplay.style.borderRadius = "10px";
+                    dictionaryDisplay.classList.add("dictionary-display");
                     dictionaryDisplay.innerHTML = "<strong>Title:</strong> " + movieTitle + "<br><br>" +
                     "<strong>Description:</strong> " + '<pre>' + JSON.stringify(dictionary, null, 4) + '</pre>';
 
